@@ -1,0 +1,9 @@
+variable "aws_profile" {}
+variable "region" {}
+variable "vpc_serice_name" {}
+variable "vpc_env" {}
+variable "vpc_cidr_block" {}
+variable "vpc_public_subnets" {}
+variable "vpc_private_subnets" {}
+variable "vpc_database_subnets" {}
+variable "vpc_availability_zones" {}
