@@ -24,6 +24,6 @@ output "database_subnets_ids" {
 }
 
 output "aws_db_subnet_group_name" {
-  value = aws_db_subnet_group.db_subnet_group[0].name
+  value = length(var.database_subnets) > 0  ? aws_db_subnet_group.db_subnet_group[0].name : null
   description = "VPC database subnet group name"
 }
