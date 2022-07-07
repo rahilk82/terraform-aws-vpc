@@ -4,7 +4,7 @@ Terraform Module for AWS VPC and subnets creation.
 
 | Name | Version |
 |------|---------|
-| aws | ~> 2.0 |
+| aws | ~> 4.0 |
 
 ## Inputs
 
