@@ -8,6 +8,11 @@ output "cidr_block" {
   description = "VPC CIDR block"
 }
 
+output "ipv6_cidr_block" {
+  value = var.enable_vpc_ipv6 ? aws_vpc.vpc.ipv6_cidr_block : null
+  description = "VPC IPv6 CIDR block"
+}
+
 output "public_subnet_ids" {
   value = aws_subnet.public.*.id
   description = "VPC public subnet ids"
