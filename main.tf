@@ -58,6 +58,19 @@ resource "aws_route_table" "public" {
   depends_on = [aws_vpc.vpc, aws_internet_gateway.internet_gateway]
 }
 
+resource "aws_route" "public_internet_gateway" {
+  route_table_id         = aws_route_table.public.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.internet_gateway.id
+}
+
+resource "aws_route" "public_internet_gateway_ipv6" {
+  count                       = var.enable_vpc_ipv6 ? 1 : 0
+  route_table_id              = aws_route_table.public.id
+  destination_ipv6_cidr_block = "::/0"
+  gateway_id                  = aws_internet_gateway.internet_gateway.id
+}
+
 resource "aws_route_table_association" "public" {
   count          = length(var.public_ipv4_subnets)
   route_table_id = aws_route_table.public.id
