@@ -30,17 +30,32 @@ variable "availability_zones" {
   type        = list(string)
 }
 
-variable "public_subnets" {
+variable "public_ipv4_subnets" {
   type        = list(string)
   description = "A list all the public subnets in the VPC"
 }
 
-variable "private_subnets" {
+variable "private_ipv4_subnets" {
   type        = list(string)
   description = "A list all the private subnets in the VPC"
 }
 
-variable "database_subnets" {
+variable "database_ipv4_subnets" {
+  type        = list(string)
+  description = "A list all the database subnets in the VPC"
+}
+
+variable "public_ipv6_subnets" {
+  type        = list(string)
+  description = "A list all the public subnets in the VPC"
+}
+
+variable "private_ipv6_subnets" {
+  type        = list(string)
+  description = "A list all the private subnets in the VPC"
+}
+
+variable "database_ipv6_subnets" {
   type        = list(string)
   description = "A list all the database subnets in the VPC"
 }
@@ -73,4 +88,10 @@ variable "enable_nat_gateway" {
   type        = bool
   default     = true
   description = "Enable/Disable nat gateway in public subnets to enable internet access in private subnet"
+}
+
+variable "enable_vpc_ipv6" {
+  type        = bool
+  default     = false
+  description = "Enables IPv6 Support in the VPC"
 }
