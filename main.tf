@@ -11,7 +11,7 @@ resource "aws_subnet" "public" {
   count                   = length(var.public_ipv4_subnets)
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.public_ipv4_subnets[count.index]
-  ipv6_cidr_block         = var.enable_vpc_ipv6 ? var.public_ipv6_subnets[count.index] : null
+  ipv6_cidr_block         = var.enable_vpc_ipv6 ? cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, count.index) : null
   availability_zone       = element(var.availability_zones, count.index)
   map_public_ip_on_launch = true
   tags                    = merge(var.tags, { "type" = "public" }, {"Name" = format("%s-%s-public-subnet-%s", var.service_name, var.env, element(var.availability_zones, count.index))})
@@ -22,7 +22,7 @@ resource "aws_subnet" "private" {
   count                   = length(var.private_ipv4_subnets)
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.private_ipv4_subnets[count.index]
-  ipv6_cidr_block         = var.enable_vpc_ipv6 ? var.private_ipv6_subnets[count.index] : null
+  ipv6_cidr_block         = var.enable_vpc_ipv6 ? cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, count.index+30) : null
   availability_zone       = element(var.availability_zones, count.index)
   map_public_ip_on_launch = true
   tags                    = merge(var.tags, { "type" = "private" }, {"Name" = format("%s-%s-private-subnent-%s", var.service_name, var.env, element(var.availability_zones, count.index))})
@@ -33,7 +33,7 @@ resource "aws_subnet" "database" {
   count                   = length(var.database_ipv4_subnets)
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.database_ipv4_subnets[count.index]
-  ipv6_cidr_block         = var.enable_vpc_ipv6 ? var.database_ipv6_subnets[count.index] : null
+  ipv6_cidr_block         = var.enable_vpc_ipv6 ? cidrsubnet(aws_vpc.vpc.ipv6_cidr_block, 8, count.index+60) : null
   availability_zone       = element(var.availability_zones, count.index)
   map_public_ip_on_launch = true
   tags                    = merge(var.tags, { "type" = "database" }, {"Name" = format("%s-%s-database-subnent-%s", var.service_name, var.env, element(var.availability_zones, count.index))})
@@ -110,10 +110,6 @@ resource "aws_nat_gateway" "nat_gw" {
 resource "aws_route_table" "private_nat" {
   count  = var.enable_nat_gateway ? 1 : 0
   vpc_id = aws_vpc.vpc.id
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat_gw[count.index].id
-  }
   tags = merge(var.tags, {"Name" = format("%s-%s-private-nat-route-table", var.service_name, var.env)})
   depends_on = [aws_vpc.vpc, aws_subnet.private, aws_nat_gateway.nat_gw]
 }

@@ -45,24 +45,6 @@ variable "database_ipv4_subnets" {
   description = "A list all the database subnets in the VPC"
 }
 
-variable "public_ipv6_subnets" {
-  type        = list(string)
-  description = "A list all the public subnets in the VPC"
-  default     = null
-}
-
-variable "private_ipv6_subnets" {
-  type        = list(string)
-  description = "A list all the private subnets in the VPC"
-  default     = null
-}
-
-variable "database_ipv6_subnets" {
-  type        = list(string)
-  description = "A list all the database subnets in the VPC"
-  default     = null
-}
-
 variable "tags" {
   type        = map(string)
   default     = {}
