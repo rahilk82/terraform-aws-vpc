@@ -93,6 +93,12 @@ variable "enable_nat_gateway" {
   description = "Enable/Disable nat gateway in public subnets to enable internet access in private subnet"
 }
 
+variable "enable_ipv6_egw" {
+  type        = bool
+  default     = true
+  description = "Enable/Disable Egress-only Gateway to enable internet access in private IPv6 subnet"
+}
+
 variable "enable_vpc_ipv6" {
   type        = bool
   default     = false

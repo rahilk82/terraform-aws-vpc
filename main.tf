@@ -79,7 +79,7 @@ resource "aws_route" "private_nat_gateway" {
 }
 
 resource "aws_route" "private_egress_gateway_ipv6" {
-  count                       = var.enable_vpc_ipv6 ? 1 : 0
+  count                       = var.enable_ipv6_egw && var.enable_vpc_ipv6 ? 1 : 0
   route_table_id              = aws_route_table.private_nat[count.index].id
   destination_ipv6_cidr_block = "::/0"
   egress_only_gateway_id      = aws_egress_only_internet_gateway.egress_only_gateway.id
