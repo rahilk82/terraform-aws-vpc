@@ -71,6 +71,20 @@ resource "aws_route" "public_internet_gateway_ipv6" {
   gateway_id                  = aws_internet_gateway.internet_gateway.id
 }
 
+resource "aws_route" "private_nat_gateway" {
+  count                  = var.enable_nat_gateway ? 1 : 0
+  route_table_id         = aws_route_table.private_nat[count.index].id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.nat_gw[count.index].id
+}
+
+resource "aws_route" "private_egress_gateway_ipv6" {
+  count                       = var.enable_vpc_ipv6 ? 1 : 0
+  route_table_id              = aws_route_table.private_nat[count.index].id
+  destination_ipv6_cidr_block = "::/0"
+  egress_only_gateway_id      = aws_egress_only_internet_gateway.egress_only_gateway.id
+}
+
 resource "aws_route_table_association" "public" {
   count          = length(var.public_ipv4_subnets)
   route_table_id = aws_route_table.public.id
