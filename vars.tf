@@ -32,17 +32,17 @@ variable "availability_zones" {
 
 variable "public_ipv4_subnets" {
   type        = list(string)
-  description = "A list all the public subnets in the VPC"
+  description = "A list all the public IPv4 subnets in the VPC"
 }
 
 variable "private_ipv4_subnets" {
   type        = list(string)
-  description = "A list all the private subnets in the VPC"
+  description = "A list all the private IPv4 subnets in the VPC"
 }
 
 variable "database_ipv4_subnets" {
   type        = list(string)
-  description = "A list all the database subnets in the VPC"
+  description = "A list all the database IPv4 subnets in the VPC"
 }
 
 variable "tags" {
