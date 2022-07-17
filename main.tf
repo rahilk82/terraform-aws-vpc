@@ -46,6 +46,12 @@ resource "aws_internet_gateway" "internet_gateway" {
   depends_on = [aws_vpc.vpc]
 }
 
+resource "aws_egress_only_internet_gateway" "egress_only_gateway" {
+  vpc_id      = aws_vpc.vpc.id
+  tags        = merge(var.tags, {"Name" = format("%s-%s-egress-gateway", var.service_name, var.env)})
+  depends_on  = [aws_vpc.vpc]
+}
+
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.vpc.id
 
