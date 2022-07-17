@@ -3,7 +3,7 @@ resource "aws_vpc" "vpc" {
   instance_tenancy     = var.instance_tenancy
   enable_dns_support   = var.enable_dns_support
   enable_dns_hostnames = var.enable_dns_hostnames
-
+  assign_generated_ipv6_cidr_block = var.enable_vpc_ipv6
   tags = merge(var.tags,  {"Name" = format("%s-%s-vpc", var.service_name, var.env)})
 }
 
