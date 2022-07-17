@@ -62,6 +62,7 @@ resource "aws_route" "public_internet_gateway" {
   route_table_id         = aws_route_table.public.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.internet_gateway.id
+  depends_on             = [aws_vpc.vpc, aws_internet_gateway.internet_gateway, aws_route_table.public]
 }
 
 resource "aws_route" "public_internet_gateway_ipv6" {
@@ -69,6 +70,7 @@ resource "aws_route" "public_internet_gateway_ipv6" {
   route_table_id              = aws_route_table.public.id
   destination_ipv6_cidr_block = "::/0"
   gateway_id                  = aws_internet_gateway.internet_gateway.id
+  depends_on                  = [aws_vpc.vpc, aws_internet_gateway.internet_gateway, aws_route_table.public]
 }
 
 resource "aws_route" "private_nat_gateway" {
@@ -76,6 +78,7 @@ resource "aws_route" "private_nat_gateway" {
   route_table_id         = aws_route_table.private_nat[count.index].id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.nat_gw[count.index].id
+  depends_on             = [aws_vpc.vpc, aws_route_table.public, aws_nat_gateway.nat_gw]
 }
 
 resource "aws_route" "private_egress_gateway_ipv6" {
@@ -83,6 +86,7 @@ resource "aws_route" "private_egress_gateway_ipv6" {
   route_table_id              = aws_route_table.private_nat[count.index].id
   destination_ipv6_cidr_block = "::/0"
   egress_only_gateway_id      = aws_egress_only_internet_gateway.egress_only_gateway.id
+  depends_on                  = [aws_vpc.vpc, aws_route_table.public, aws_egress_only_internet_gateway.egress_only_gateway]
 }
 
 resource "aws_route_table_association" "public" {
