@@ -14,6 +14,12 @@ variable "aws_region" {
   description = "AWS Region for develop infra"
 }
 
+variable "aws_profile" {
+  type        = string
+  default     = "default"
+  description = "AWS Region for develop infra"
+}
+
 variable "cidr_block" {
   type        = string
   description = "CIDR for dev VPC"
