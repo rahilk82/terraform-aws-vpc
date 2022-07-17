@@ -54,17 +54,6 @@ resource "aws_egress_only_internet_gateway" "egress_only_gateway" {
 
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.vpc.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.internet_gateway.id
-  }
-
-  route {
-    ipv6_cidr_block        = "::/0"
-    egress_only_gateway_id = aws_egress_only_internet_gateway.example.id
-  }
-
   tags       = merge(var.tags, {"Name" = format("%s-%s-public-route-table", var.service_name, var.env)})
   depends_on = [aws_vpc.vpc, aws_internet_gateway.internet_gateway]
 }
