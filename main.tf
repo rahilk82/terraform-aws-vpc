@@ -10,7 +10,7 @@ resource "aws_vpc" "vpc" {
 resource "aws_subnet" "public" {
   count                   = length(var.public_subnets)
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = var.public_subnets[count.index]
+  cidr_block              = var.public_ipv4_subnets[count.index]
   availability_zone       = element(var.availability_zones, count.index)
   map_public_ip_on_launch = true
   tags                    = merge(var.tags, { "type" = "public" }, {"Name" = format("%s-%s-public-subnet-%s", var.service_name, var.env, element(var.availability_zones, count.index))})
@@ -20,7 +20,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   count                   = length(var.private_subnets)
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = var.private_subnets[count.index]
+  cidr_block              = var.private_ipv4_subnets[count.index]
   availability_zone       = element(var.availability_zones, count.index)
   map_public_ip_on_launch = true
   tags                    = merge(var.tags, { "type" = "private" }, {"Name" = format("%s-%s-private-subnent-%s", var.service_name, var.env, element(var.availability_zones, count.index))})
@@ -30,7 +30,7 @@ resource "aws_subnet" "private" {
 resource "aws_subnet" "database" {
   count                   = length(var.database_subnets)
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = var.database_subnets[count.index]
+  cidr_block              = var.database_ipv4_subnets[count.index]
   availability_zone       = element(var.availability_zones, count.index)
   map_public_ip_on_launch = true
   tags                    = merge(var.tags, { "type" = "database" }, {"Name" = format("%s-%s-database-subnent-%s", var.service_name, var.env, element(var.availability_zones, count.index))})
