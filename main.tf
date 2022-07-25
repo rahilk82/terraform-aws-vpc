@@ -40,13 +40,13 @@ resource "aws_subnet" "database" {
   depends_on              = [aws_vpc.vpc]
 }
 
-resource "aws_internet_gateway" "internet_gateway" {
+resource "aws_internet_gateway" "igw" {
   vpc_id     = aws_vpc.vpc.id
   tags       = merge(var.tags, {"Name" = format("%s-%s-internet-gateway", var.service_name, var.env)})
   depends_on = [aws_vpc.vpc]
 }
 
-resource "aws_egress_only_internet_gateway" "egress_only_gateway" {
+resource "aws_egress_only_internet_gateway" "egw" {
   vpc_id      = aws_vpc.vpc.id
   tags        = merge(var.tags, {"Name" = format("%s-%s-egress-gateway", var.service_name, var.env)})
   depends_on  = [aws_vpc.vpc]
@@ -55,22 +55,22 @@ resource "aws_egress_only_internet_gateway" "egress_only_gateway" {
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.vpc.id
   tags       = merge(var.tags, {"Name" = format("%s-%s-public-route-table", var.service_name, var.env)})
-  depends_on = [aws_vpc.vpc, aws_internet_gateway.internet_gateway]
+  depends_on = [aws_vpc.vpc, aws_internet_gateway.igw]
 }
 
 resource "aws_route" "public_internet_gateway" {
   route_table_id         = aws_route_table.public.id
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.internet_gateway.id
-  depends_on             = [aws_vpc.vpc, aws_internet_gateway.internet_gateway, aws_route_table.public]
+  gateway_id             = aws_internet_gateway.igw.id
+  depends_on             = [aws_vpc.vpc, aws_internet_gateway.igw, aws_route_table.public]
 }
 
 resource "aws_route" "public_internet_gateway_ipv6" {
   count                       = var.enable_vpc_ipv6 ? 1 : 0
   route_table_id              = aws_route_table.public.id
   destination_ipv6_cidr_block = "::/0"
-  gateway_id                  = aws_internet_gateway.internet_gateway.id
-  depends_on                  = [aws_vpc.vpc, aws_internet_gateway.internet_gateway, aws_route_table.public]
+  gateway_id                  = aws_internet_gateway.igw.id
+  depends_on                  = [aws_vpc.vpc, aws_internet_gateway.igw, aws_route_table.public]
 }
 
 resource "aws_route" "private_nat_gateway" {
@@ -85,22 +85,22 @@ resource "aws_route" "private_egress_gateway_ipv6" {
   count                       = var.enable_ipv6_egw && var.enable_vpc_ipv6 ? 1 : 0
   route_table_id              = aws_route_table.private_nat[count.index].id
   destination_ipv6_cidr_block = "::/0"
-  egress_only_gateway_id      = aws_egress_only_internet_gateway.egress_only_gateway.id
-  depends_on                  = [aws_vpc.vpc, aws_route_table.public, aws_egress_only_internet_gateway.egress_only_gateway]
+  egress_only_gateway_id      = aws_egress_only_internet_gateway.egw.id
+  depends_on                  = [aws_vpc.vpc, aws_route_table.public, aws_egress_only_internet_gateway.egw]
 }
 
 resource "aws_route_table_association" "public" {
   count          = length(var.public_ipv4_subnets)
   route_table_id = aws_route_table.public.id
   subnet_id      = aws_subnet.public[count.index].id
-  depends_on     = [aws_vpc.vpc, aws_route_table.public, aws_internet_gateway.internet_gateway]
+  depends_on     = [aws_vpc.vpc, aws_route_table.public, aws_internet_gateway.igw]
 }
 
 resource "aws_eip" "nat" {
   count      = var.enable_nat_gateway ? 1 : 0
   vpc        = true
   tags       = merge(var.tags, {"Name" = format("%s-%s-nat-eip", var.service_name, var.env)})
-  depends_on = [aws_vpc.vpc, aws_route_table.public, aws_internet_gateway.internet_gateway, aws_route_table_association.public]
+  depends_on = [aws_vpc.vpc, aws_route_table.public, aws_internet_gateway.igw, aws_route_table_association.public]
 }
 
 resource "aws_nat_gateway" "nat_gw" {
@@ -108,7 +108,7 @@ resource "aws_nat_gateway" "nat_gw" {
   allocation_id = aws_eip.nat[count.index].id
   subnet_id     = aws_subnet.public[count.index].id
   tags          = merge(var.tags, {"Name" = format("%s-%s-nat-gateway", var.service_name, var.env)})
-  depends_on    = [aws_vpc.vpc, aws_internet_gateway.internet_gateway, aws_eip.nat]
+  depends_on    = [aws_vpc.vpc, aws_eip.nat]
 }
 
 resource "aws_route_table" "private_nat" {
