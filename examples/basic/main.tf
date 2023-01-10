@@ -7,7 +7,7 @@ module "vpc" {
   source = "../../"
   env = var.vpc_env
   cidr_block = var.vpc_cidr_block
-  service_name = var.vpc_serice_name
+  service_name = var.vpc_service_name
   availability_zones = var.vpc_availability_zones
   database_subnets = var.vpc_database_subnets
   private_subnets = var.vpc_private_subnets
